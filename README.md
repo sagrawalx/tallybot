@@ -73,7 +73,7 @@ You'll then want to edit `config.yml` to your liking.
 * The name you choose here will be used only to invoke the bot. I named it `TallyBot` for consistency, but you can name it whatever you like. 
 * The email address can also be set to whatever you like. I used `tally-bot@...`. 
 
-Download it's `zuliprc` file. The file can live anywhere you like; for the purposes of these instructions, I will assume that it lives in `~/downloads/`. 
+Download the bot's `zuliprc` file. The file can live anywhere you like, but for the purposes of these instructions, I will assume that it lives in `~/downloads/`. 
 
 ## Start Bot
 
