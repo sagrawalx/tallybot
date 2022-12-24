@@ -67,7 +67,7 @@ You'll then want to edit `config.yml` to your liking.
 
 ## Add Bot
 
-[Add a generic bot](https://zulip.com/help/add-a-bot-or-integration) to your Zulip organization. 
+[Add a generic bot](https://zulip.com/help/add-a-bot-or-integration) to your Zulip organization: 
 
 * The bot needs to be an administrator. 
 * The name you choose here will be used only to invoke the bot. I named it `TallyBot` for consistency, but you can name it whatever you like. 
