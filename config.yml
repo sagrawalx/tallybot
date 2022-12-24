@@ -8,7 +8,6 @@
         due_time: 18
         max_week: 10
         due_days: ['tue', 'thu']
-        exceptions: ['w3mon']
 -
     stream_specifier: test
     stream_name: test
