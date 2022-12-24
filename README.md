@@ -77,7 +77,7 @@ Download it's `zuliprc` file. The file can live anywhere you like; for the purpo
 
 ## Start Bot
 
-Run the following, changing `/path/to/python-zulip-api/zulip-api-py3-venv/bin/activate` and `~/downloads/zuliprc` as needed (see above). Note that, even if you named the
+Run the following, changing `/path/to/python-zulip-api/zulip-api-py3-venv/bin/activate` and `~/downloads/zuliprc` as needed (see above). 
 
 ```
 source /path/to/python-zulip-api/zulip-api-py3-venv/bin/activate
