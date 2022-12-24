@@ -20,11 +20,11 @@ Roughly, each assignment that asks students to post to Zulip carries a label and
 
 The bot reacts to private messages sent to it, and to stream messages in which it is tagged. If the message to the bot contains the word `clear`, it clears the sender's private message history with the bot. Otherwise, the bot will look through messages in a given stream. If the message it is reacting to is a stream message in which it was tagged, that will be the stream whose messages the bot looks through, and to clean up clutter, the bot will delete the stream message in which it was tagged. If a private message is sent to the bot, the message must contain either the full name of the stream or a short stream specifier (which can be specified in `config.yml`). 
 
-For members (ie, students) in the Zulip organization, the bot will count the number of distinct assignment labels that appear among that member's messages. Messages that were posted after the deadline, and messages that were marked as irrelevant, are not counted. Here, "marked as irrelevant" means that a moderator reacts to the message with a designated emoji, which can be specified in `config.yml`). That total count is returned to the user as a response. 
+For members (ie, students) in the Zulip organization, the bot will count the number of distinct assignment labels that appear among that member's messages. Messages that were posted after the deadline, and messages that were marked as irrelevant, are not counted. Here, "marked as irrelevant" means that a moderator reacts to the message with a designated emoji, which can be specified in `config.yml`). That total count is returned to the user as a private message. 
 
 For moderators and admins (ie, instructional staff), the bot will do one of two things: 
 
-* If the message contains an assignment label, the bot will return all messages that match that label. 
+* If the message contains an assignment label, the bot will return all messages that match that label as a private message. 
 
 * Otherwise, the bot will return total counts for all members (ie, students). Members are specified by their email address. It will be a private message in CSV format with header `email,count`.
 
