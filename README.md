@@ -77,14 +77,14 @@ Download it's `zuliprc` file. The file can live anywhere you like; for the purpo
 
 ## Start Bot
 
-Run the following, changing `/path/to/python-zulip-api/zulip-api-py3-venv/bin/activate` and `~/downloads/zuliprc` as needed (see above). 
+Run the following, changing `/path/to/python-zulip-api/zulip-api-py3-venv/bin/activate` and `~/downloads/zuliprc` as needed (see above). Note that, even if you put the `zuliprc` file in the same directory as the bot, you'll have to specify the full path to the file. 
 
 ```
 source /path/to/python-zulip-api/zulip-api-py3-venv/bin/activate
 zulip-run-bot tallybot --config-file ~/downloads/zuliprc
 ```
 
-The bot can be used while this script continues to run!
+This should start up the bot, and the bot can be used while this script continues to run!
 
 # Todo
 
