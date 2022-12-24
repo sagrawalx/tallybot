@@ -1,4 +1,4 @@
 zuliprc
 __pycache__/
-/push.sh
-/pull.sh
+push.sh
+pull.sh
