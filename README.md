@@ -48,7 +48,7 @@ cd python-zulip-api
 python3 ./tools/provision
 ```
 
-The output should end with a `source` command like the following. You don't need to run this now: 
+The output should end with a `source` command like the following. **You don't need to run this right now**, but it's probably good to make a note of it: 
 
 ```
 source /path/to/python-zulip-api/zulip-api-py3-venv/bin/activate
