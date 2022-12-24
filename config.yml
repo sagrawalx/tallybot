@@ -1,0 +1,23 @@
+-
+    stream_specifier: wi23
+    stream_name: Winter 2023, Math 187A
+    invalid_emoji: octopus
+    labeling_scheme: StandardLabelingScheme
+    labeler_config: 
+        start_date: 2023-01-09
+        due_time: 18
+        max_week: 10
+        due_days: ['tue', 'thu']
+        exceptions: ['w3mon']
+-
+    stream_specifier: test
+    stream_name: test
+    invalid_emoji: octopus
+    labeling_scheme: StandardLabelingScheme
+    labeler_config: 
+        start_date: 2022-11-28
+        due_time: 7
+        max_week: 10
+        due_days: ['mon', 'wed', 'fri']
+        exceptions: ['w3mon']
+        gaps: [2, 4]
