@@ -14,7 +14,7 @@ As far as I can tell, Discord is set up in a way to make automated data tabulati
 
 ## Overview
 
-Roughly, each assignment that asks students to post to Zulip carries a label and a deadline. In my typical labeling scheme, labels are strings like `w3thu`, which indicates an assignment due on Thursday of the 3rd week of the term (at some designated time that can be specified in `config.yml`). The bot looks through Zulip messages in a given stream whose topic contains a match for a label. In other words, students must include this label if the topic of a message they'd like to be counted by the bot. 
+Roughly, each assignment that asks students to post to Zulip carries a label and a deadline. In my typical labeling scheme, labels are strings like `w3thu`, which indicates an assignment due on Thursday of the 3rd week of the term (at some designated time that can be specified in `config.yml`). The bot looks through Zulip messages in a given stream whose topic contains a match for a label (enclosed in square brackets). In other words, students must include such a label in the topic of any message that they'd like to be counted by the bot. 
 
 ## What the Bot Does
 
