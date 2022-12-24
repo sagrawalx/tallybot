@@ -88,9 +88,9 @@ This should start up the bot, and the bot can be used while this script continue
 
 # Todo
 
-There's all kinds of things that can be done with this bot. Here are somethings that are on my radar: 
+There are all kinds of things that can and should be done next. Here are somethings that are on my radar: 
 
 * The bot should have more graceful error handling. 
 * The bot should have better help messages. 
-* It would be nice if the bot were easier to set up. 
+* It would be nice if the bot were easier to set up and/or if it could run on the cloud. 
 
