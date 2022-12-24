@@ -1,5 +1,5 @@
 
-TallyBot is a Zulip bot that facilitates flipping classes by performing book-keeping for assignments that ask students to participate in an online discussion. 
+**TallyBot** is a Zulip bot that facilitates flipping classes by performing book-keeping for assignments that ask students to participate in an online discussion. 
 
 # Background
 
