@@ -65,6 +65,12 @@ git clone https://github.com/sagrawalx/tallybot
 
 You'll then want to edit `config.yml` to your liking. 
 
+The bot also makes use of the [PyYAML](https://pyyaml.org/) library, so you'll want to install it if you haven't already: 
+
+```
+pip install pyyaml
+```
+
 ## Add Bot
 
 [Add a generic bot](https://zulip.com/help/add-a-bot-or-integration) to your Zulip organization: 
