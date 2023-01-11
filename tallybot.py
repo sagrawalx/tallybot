@@ -1,10 +1,9 @@
 import string
-import os
 import yaml
-import zulip
 from datetime import datetime
 from zulip_bots.lib import BotHandler
 from labelingscheme import *
+from userlist import *
 
 class TallyBotHandler:
     def usage(self) -> str:
@@ -34,18 +33,14 @@ class TallyBotHandler:
             # Extract client
             client = bot_handler._client
             
+            # Delete all stream messages mentioning this bot
+            clear_stream_mentions(client)
+            
             # Minimize message content
             message["content"] = minimize(message["content"])
             
             # Get interlocutor information
-            interloc: dict = client.get_user_by_id(message["sender_id"])["user"]
-               
-            # Delete interlocutors's message if stream message
-            # if message["type"] == "stream":
-            #     wrap(client.delete_message(message["id"]))
-            
-            # Delete all stream messages mentioning this bot
-            clear_stream_mentions(client)
+            interloc = client.get_user_by_id(message["sender_id"])["user"]
             
             # Delete private message history, if requested
             if "clear" in message["content"]:
@@ -68,13 +63,16 @@ class TallyBotHandler:
                 respond(client, interloc, response)
                 return None
             
+            # Initialize user database
+            users = UserList(bot_handler, config["stream_specifier"])
+            
             # Use configuration data to instantiate the labeling scheme
             scheme = eval(config.pop("labeling_scheme", "StandardLabelingScheme"))
             assert issubclass(scheme, LabelingScheme)
             labeling = scheme(config.pop("labeler_config"))
             
             # Get messages
-            messages = get_messages(client, config, labeling)
+            messages = get_messages(client, users, config, labeling)
             
             if messages is None:
                 response = "There was an unexpected problem. Please try again, "\
@@ -101,18 +99,18 @@ class TallyBotHandler:
             # Issue response    
             respond(client, interloc, response)
         
-        # This shouldn't happen! It might if of the calls to the Zulip client 
+        # This shouldn't happen! It might if one of the calls to the Zulip client 
         # returns something unexpected... 
         except KeyError as k:
             print(f"The key {k} raised a KeyError. This shouldn't happen..." )
         
         # Return
         finally:
-            return None
+           return None
 
 handler_class = TallyBotHandler
 
-def clear_pm_history(client: zulip.Client, interloc: dict) -> None:
+def clear_pm_history(client, interloc: dict) -> None:
     """
     Clear the one-on-one private message history with the interlocutor.
     """
@@ -137,7 +135,7 @@ def clear_pm_history(client: zulip.Client, interloc: dict) -> None:
         for m in batch:
             client.delete_message(m["id"])
             
-def clear_stream_mentions(client : zulip.Client) -> None:
+def clear_stream_mentions(client) -> None:
     """
     Delete all stream messages mentionining the bot. 
     """
@@ -161,7 +159,7 @@ def clear_stream_mentions(client : zulip.Client) -> None:
             if m["type"] == "stream":
                 client.delete_message(m["id"])
 
-def respond(client: zulip.Client, interloc: dict, response: str) -> None:
+def respond(client, interloc: dict, response: str) -> None:
     """
     Uses the given client to send the interlocutor a private message containing 
     the given response. 
@@ -208,7 +206,7 @@ def get_config(config_file, message: dict) -> dict:
     # If no configuration data was matched          
     return None
     
-def get_messages(client: zulip.Client, config: dict, labeling: LabelingScheme) -> list:
+def get_messages(client, users: UserList, config: dict, labeling: LabelingScheme) -> list:
     """
     Returns a list of all messages by members whose topic has a match for the
     labeling scheme, ie, for which the topic_match() method of the given
@@ -244,7 +242,7 @@ def get_messages(client: zulip.Client, config: dict, labeling: LabelingScheme) -
                 keep = False
             else:
                 # Drop moderator messages
-                sender = client.get_user_by_id(m["sender_id"])["user"]
+                sender = users.get(m["sender_id"])
                 if sender["role"] <= 300:
                     keep = False
                 else: 
@@ -263,7 +261,7 @@ def get_messages(client: zulip.Client, config: dict, labeling: LabelingScheme) -
                 for r in m["reactions"]:
                     if r["emoji_name"] == config["invalid_emoji"]:
                         # Check to see if the reactor was a moderator
-                        reactor = client.get_user_by_id(r["user"]["id"])["user"]
+                        reactor = users.get(r["user"]["id"])
                         if reactor["role"] <= 300:
                             valid = False
                             break
@@ -285,15 +283,16 @@ def get_messages(client: zulip.Client, config: dict, labeling: LabelingScheme) -
     
 def do_daily(messages: list, label: Label, stream_specifier: str) -> str:
     """
-    Return list of all messages that had a matching label in their topic as
-    a markdown-formatted bulleted list. 
+    Return list of truncated messages that had a matching label in their 
+    topic as a markdown-formatted bulleted list. 
     """
     # Header
     response = f"Reading questions for {stream_specifier} {label.label()} \n\n"
     # Data
     for m in messages:
         if m["label"] == label.label():
-            response += f"* ({m['sender_name']}) {m['content']}\n"
+            c = m["content"][:50].replace("\n", " ")
+            response += f"* ({m['sender_name']}) {c}\n"
     
     return response
     
