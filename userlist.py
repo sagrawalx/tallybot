@@ -1,3 +1,5 @@
+# This file is part of TallyBot (https://github.com/sagrawalx/tallybot)
+
 import os
 from csv import DictReader, DictWriter
 
@@ -80,5 +82,12 @@ class UserList:
         self.users[int(user_id)] = user
         
         return user
+        
+    def keys(self):
+        """
+        Return an iterator that goes through the list of user ids of users
+        in this user list.
+        """
+        return self.users.keys()
     
     

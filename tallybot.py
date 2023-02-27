@@ -1,3 +1,5 @@
+# This file is part of TallyBot (https://github.com/sagrawalx/tallybot)
+
 import string
 import yaml
 from datetime import datetime
@@ -90,7 +92,7 @@ class TallyBotHandler:
                 
                 # Otherwise, do overall count tabulation
                 else:
-                    response = do_counts(messages)
+                    response = do_counts(messages, users)
             
             # If sender of message is a member, tabulate personal counts
             else:
@@ -296,20 +298,23 @@ def do_daily(messages: list, label: Label, stream_specifier: str) -> str:
     
     return response
     
-def do_counts(messages: list) -> str:
+def do_counts(messages: list, users: UserList) -> str:
     """
-    Return list of total counts by user's email address in CSV format. 
+    Return a list of names, emails, and counts as CSV. 
     """
+    # Count messages
+    count = {x : 0 for x in users.keys() if users.get(x)["role"] > 300}
+    for m in messages:
+        if m["on_time"] and m["valid"]:
+            count[m["sender_id"]] += 1
+    
     # Header for CSV
-    response = "email,count\n"
-    # CSV data
-    users = set([m["sender_email"] for m in messages])
-    count = { u : 0 for u in users }
-    for u in users:
-        count[u] = len(set([m["label"] for m in messages \
-            if m["sender_email"] == u and m["on_time"] and m["valid"]]))
-        response += f"{u},{count[u]}\n"
-        
+    response = "name,email,count\n"
+    for x, count in count.items():
+        u = users.get(x)
+        name = u["full_name"]
+        email = u["delivery_email"]
+        response += f"{name},{email},{count}\n"   
     return response
     
 def do_personal(messages : list, interloc : dict) -> str:

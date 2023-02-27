@@ -1,3 +1,5 @@
+# This file is part of TallyBot (https://github.com/sagrawalx/tallybot)
+
 import string
 from re import search
 from datetime import datetime, timedelta

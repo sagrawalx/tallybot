@@ -99,4 +99,16 @@ There are all kinds of things that can and should be done next. Here are somethi
 * The bot should have more graceful error handling. 
 * The bot should have better help messages. 
 * It would be nice if the bot were easier to set up and/or if it could run on the cloud. 
+* There are many places where the code could be "cleaner."
+* The "daily tabulation" functionality for moderators is currently not very useful. It should be reworked in a more useful way, or else be eliminated.  
+* ...
+
+
+# License
+
+I do not understand software licensing. This code is written in Python ([Python Software Foundation License](https://docs.python.org/3/license.html)) mostly on Ubuntu ([Canonical's IPRights Policy](https://ubuntu.com/legal/intellectual-property-policy)) using the GNOME Text Editor ([GNU GPLv3](https://gitlab.gnome.org/GNOME/gnome-text-editor/)). It makes use of `python-zulip-api` ([Apache 2.0 license](https://github.com/zulip/python-zulip-api/blob/main/LICENSE)) and `pyyaml` ([MIT license](https://github.com/yaml/pyyaml/blob/master/LICENSE)). None of this software appears inside this repository. I don't understand many things about how all of this legalese fits together, and if you would like to explain this to me, I would enjoy (or at least, tolerate) having a conversation about this with you. 
+
+Meanwhile, to the extent that I have rights to this code, I would like for it to be copylefted under [**GPLv3**](https://www.gnu.org/licenses/gpl-3.0.en.html) (only). 
+
+The code was last updated in 2023. 
 
