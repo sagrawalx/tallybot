@@ -26,7 +26,7 @@ For moderators and admins (ie, instructional staff), the bot will do one of two 
 
 * If the message contains an assignment label, the bot will return all messages that match that label as a private message. 
 
-* Otherwise, the bot will return total counts for all members (ie, students). Members are specified by their email address. It will be a private message in CSV format with header `email,count`.
+* Otherwise, the bot will return total counts for all members (ie, students). Members are specified by their name and email address. It will be a private message in CSV format with header `name,email,count`.
 
 ## Labeling Schemes
 
