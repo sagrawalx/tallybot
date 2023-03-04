@@ -104,6 +104,6 @@ There are all kinds of things that can and should be done next. Here are somethi
 
 # License
 
-The code in this repository to be copylefted under [**GPLv3**](https://www.gnu.org/licenses/gpl-3.0.en.html) (only).
+The code in this repository is copylefted under [**GPLv3**](https://www.gnu.org/licenses/gpl-3.0.en.html) (only).
 
 The code was last updated in 2023. It is written in Python ([Python Software Foundation License](https://docs.python.org/3/license.html)) mostly on Ubuntu ([Canonical's IPRights Policy](https://ubuntu.com/legal/intellectual-property-policy)) using the GNOME Text Editor ([GNU GPLv3](https://gitlab.gnome.org/GNOME/gnome-text-editor/)). It makes use of `python-zulip-api` ([Apache 2.0 license](https://github.com/zulip/python-zulip-api/blob/main/LICENSE)) and `pyyaml` ([MIT license](https://github.com/yaml/pyyaml/blob/master/LICENSE)). None of these dependencies or tools appear in this repository. 
