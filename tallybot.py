@@ -12,8 +12,8 @@ class TallyBotHandler:
         return """
         I'm a Zulip bot. I respond via private message to stream messages I'm 
         tagged in, and to private messages sent to me. A private message sent 
-        to me must either contain the short specifier (eg, 'wi23') or the full 
-        name (eg, 'Winter 2023, Math 187A') for the class stream you're 
+        to me must either contain the short specifier (eg, 'sp23') or the full 
+        name (eg, 'Spring 2023, Math 11') for the class stream you're 
         interested in getting data about. 
         
         If you are a student (ie, a regular member in the Zulip organization), 
@@ -23,11 +23,12 @@ class TallyBotHandler:
         If you are an instructor or TA (ie, a moderator or administrator in the
         Zulip organization): 
         
-        * If your message contains a reading assignment label (eg, 'w1fri'), I
-          will return all reading questions for that day (as a bulleted list).
+        * If, after removing the stream specifier, the message is nonempty and 
+          there is a nonempty subset of students whose names contain the 
+          message as a substring, I will return counts for just those students 
+          in verbose format.
         
-        * Otherwise, I will return scores for all students who have submitted
-          reading questions to the relevant stream (in CSV format).
+        * Otherwise, I will return counts for *all* students in CSV format.
         """
     
     def handle_message(self, message: dict, bot_handler: BotHandler) -> None:
@@ -43,6 +44,12 @@ class TallyBotHandler:
             
             # Get interlocutor information
             interloc = client.get_user_by_id(message["sender_id"])["user"]
+            
+            # Should be commented out when deployed
+            # if interloc["role"] > 300:
+            #     response = "I am offline for the weekend."
+            #     respond(client, interloc, response)
+            #     return None
             
             # Delete private message history, if requested
             if "clear" in message["content"]:
@@ -82,27 +89,31 @@ class TallyBotHandler:
                 respond(client, interloc, response)
                 return None
             
-            # If sender of message is a moderator, administrator, or owner:
-            if interloc["role"] <= 300:
-                label:Label = labeling.message_match(message["content"])
-                
-                # If message contains assignment code, do daily tabulation
-                if label is not None:
-                    response = do_daily(messages, label, config["stream_specifier"])
-                
-                # Otherwise, do overall count tabulation
-                else:
-                    response = do_counts(messages, users)
+            # Tally messages
+            tally = do_tally(messages)
             
-            # If sender of message is a member, tabulate personal counts
+            # If interlocutor is a member, return verbose individual count
+            if interloc["role"] > 300:
+                response = individual_count(tally, interloc["user_id"])
+            # Otherwise:
             else:
-                response = do_personal(messages, interloc)
+                # Search user list for names that contain the message
+                matches = users.find(message["content"], is_lower=True)
+                # If no matching users are found, return all counts
+                if len(matches) == 0:
+                    response = all_counts(tally, users)
+                # Else return all matching counts in verbose format
+                else:
+                    response = ""
+                    for m in matches:
+                        response += m["full_name"] + "\n"
+                        response += individual_count(tally, m["user_id"])
+                        response += "\n\n"
             
-            # Issue response    
-            respond(client, interloc, response)
+            # Issue response
+            respond(client, interloc, response) 
         
-        # This shouldn't happen! It might if one of the calls to the Zulip client 
-        # returns something unexpected... 
+        # KeyError only if Zulip API returns something unexpected 
         except KeyError as k:
             print(f"The key {k} raised a KeyError. This shouldn't happen..." )
         
@@ -175,10 +186,11 @@ def respond(client, interloc: dict, response: str) -> None:
 
 def minimize(x: str) -> str:
     """
-    Converts a string to lower case and removes all punctuation. 
+    Converts a string to lower case, removes all punctuation, and strips any
+    trailing whitespace. 
     """
     punc_remover = str.maketrans("", "", string.punctuation)
-    return x.lower().translate(punc_remover)
+    return x.lower().translate(punc_remover).strip()
     
 def get_config(config_file, message: dict) -> dict:
     """
@@ -187,6 +199,10 @@ def get_config(config_file, message: dict) -> dict:
     message was a private message, the content of the message must contain a
     specifying information (short specifier or full stream name). If nothing
     matches, returns None. 
+    
+    If the message is a private message and contains a valid stream specifier,
+    this method will modify message["content"] by removing that stream 
+    specifier from the string and then stripping any trailing whitespace. 
     """
     configs = yaml.safe_load(config_file)
     
@@ -199,13 +215,24 @@ def get_config(config_file, message: dict) -> dict:
             
     # Else should be a private message:
     elif message["type"] == "private":
-        for c in configs: 
-            if c["stream_specifier"] in message["content"]:
-                return c
-            elif minimize(c["stream_name"]) in message["content"]:
-                return c
+        for c in configs:
+            # List of possible specifying strings to look for in the message
+            names = [c["stream_specifier"], minimize(c["stream_name"])]
+            
+            # For each possible specifying string...
+            for x in names:
+                # Try removing that specifying string
+                m = message["content"].replace(x, "").strip()
+                
+                # If something was actually removed, a match was found!
+                if len(m) < len(message["content"]):
+                    # Truncate the message content by removing the match
+                    message["content"] = m
+                    
+                    # Return the configuration data
+                    return c
     
-    # If no configuration data was matched          
+    # If no configuration data was matched ...         
     return None
     
 def get_messages(client, users: UserList, config: dict, labeling: LabelingScheme) -> list:
@@ -220,7 +247,7 @@ def get_messages(client, users: UserList, config: dict, labeling: LabelingScheme
     batch = []
     found_oldest = False
     while not found_oldest: 
-        # Run request
+        # Run request for batch of messages
         anchor = "newest" if len(batch) == 0 else batch[-1]["id"]
         request = {
             "anchor": anchor,
@@ -281,77 +308,85 @@ def get_messages(client, users: UserList, config: dict, labeling: LabelingScheme
                     "valid" : valid
                 })
     
+    # Return
     return messages
     
-def do_daily(messages: list, label: Label, stream_specifier: str) -> str:
+def do_tally(messages: list) -> dict:
     """
-    Return list of truncated messages that had a matching label in their 
-    topic as a markdown-formatted bulleted list. 
-    """
-    # Header
-    response = f"Reading questions for {stream_specifier} {label.label()} \n\n"
-    # Data
-    for m in messages:
-        if m["label"] == label.label():
-            c = m["content"][:50].replace("\n", " ")
-            response += f"* ({m['sender_name']}) {c}\n"
+    Tallies the messages and returns a dict. 
     
+    If tally is the name of the dict being returned, the keys of tally are the 
+    user ids that appear in the input list of messages. If x is such a user id, 
+    then tally[x] is again a dict with two keys. 
+    
+    - tally[x]["credit"] is a list of the assignment labels for which the user
+      with user id x had at least one on-time and valid post. 
+    - tally[x]["no_credit"] is a list of the assignment labels for which the
+      user with user id x had only late or invalid posts. 
+    """
+    # Initial tally of all messages
+    initial = {}
+    for m in messages:
+        x = m["sender_id"]
+        a = m["label"]
+        if x not in initial.keys():
+            initial[x] = {}
+        if a not in initial[x].keys():
+            initial[x][a] = False
+        initial[x][a] = initial[x][a] or (m["on_time"] and m["valid"])
+    
+    # Consolidate tallies as lists
+    tally = {}    
+    for x in initial.keys():
+        tally[x] = {}
+        tally[x]["credit"] = [a for a, v in initial[x].items() if v]
+        tally[x]["no_credit"] = [a for a, v in initial[x].items() if not v]
+    
+    # Return    
+    return tally
+    
+def individual_count(tally: dict, interloc_id: int) -> str:
+    """
+    Return the total count, the contributing posts, and the non-contributing
+    posts of the interlocutor as a string. The input should be a dict of the 
+    form that is output by the tally method above. 
+    """
+    # Extract interlocutor's data from the tally
+    interloc_tally = tally.get(interloc_id, {"credit": [], "no_credit": []})
+    
+    # Generate verbose response
+    response = f"Current RQ Count: {len(interloc_tally['credit'])}"
+    
+    if len(interloc_tally["credit"]) > 0:
+        response += f"\nOn-time and Valid RQs: "
+        response += ", ".join(interloc_tally["credit"])
+    if len(interloc_tally["no_credit"]) > 0:
+        response += f"\nLate or Invalid RQs: "
+        response += ", ".join(interloc_tally["no_credit"])
+    
+    # Return
     return response
     
-def do_counts(messages: list, users: UserList) -> str:
+def all_counts(tally: dict, users: UserList) -> str:
     """
-    Return a list of names, emails, and counts as CSV. 
-    """
-    # Count messages
-    count = {x : 0 for x in users.keys() if users.get(x)["role"] > 300}
-    for m in messages:
-        if m["on_time"] and m["valid"]:
-            count[m["sender_id"]] += 1
+    Return a list of names, emails, and counts as CSV. If verbose is True,
+    it also outputs a list of assignment labels for which the user got credit, 
+    and a list of assignment labels for which the user did not get credit. 
     
-    # Header for CSV
-    response = "name,email,count\n"
-    for x, count in count.items():
+    The first argument should be a dict as output by the tally method. 
+    """
+    # CSV header
+    response = "name,email,count"
+    response += "\n"
+    
+    # CSV content
+    for x in tally.keys():
         u = users.get(x)
         name = u["full_name"]
         email = u["delivery_email"]
-        response += f"{name},{email},{count}\n"   
+        count = len(tally[x]["credit"])
+        response += f"{name},{email},{count}\n"
+    
+    # Return  
     return response
     
-def do_personal(messages : list, interloc : dict) -> str:
-    """
-    Return total number of on-time and valid messages for the interlocutor as a
-    string. If there were late and/or invalid_emoji messages, these counts are
-    returned as well. 
-    """
-    # Make a dictionary where keys are assignment labels, and values are 
-    # dictionaries with two keys: "on_time" (true iff any of the messages
-    # corresponding to that assignment was on time), and "valid" (true iff any 
-    # of the messages corresponding to that assignment is valid)
-    assignment = {}
-    for m in messages:
-        if m["sender_id"] == interloc["user_id"]:
-            a = m["label"]
-            if a not in assignment.keys():
-                assignment[a] = { "on_time" : False, "valid" : False}
-            assignment[a]["on_time"] = assignment[a]["on_time"] or m["on_time"]
-            assignment[a]["valid"] = assignment[a]["valid"] or m["valid"]
-    
-    # Filter the dictionary into separate lists
-    credit = [a for a, v in assignment.items() if v["on_time"] and v["valid"]]
-    late = [a for a, v in assignment.items() if not v["on_time"]]
-    invalid = [a for a, v in assignment.items() if v["on_time"] and not v["valid"]]
-    
-    # Formulate response
-    response = f"On-time posts with valid reading questions: {len(credit)}"
-    if len(credit) > 0:
-        response += " (" + (", ".join(credit)) + ")"
-    if len(late) > 0:
-        response += f".\nLate posts: {len(late)}"
-        response += " (" + (", ".join(late)) + ")"
-    if len(invalid) > 0:
-        response += f".\nOther posts: {len(invalid)}"
-        response += " (" + (", ".join(invalid)) + ")"   
-    response += "."
-    
-    return response
-

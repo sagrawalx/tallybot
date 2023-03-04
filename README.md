@@ -20,13 +20,13 @@ Roughly, each assignment that asks students to post to Zulip carries a label and
 
 The bot reacts to private messages sent to it, and to stream messages in which it is tagged. If the message to the bot contains the word `clear`, it clears the sender's private message history with the bot. Otherwise, the bot will look through messages in a given stream. If the message it is reacting to is a stream message in which it was tagged, that will be the stream whose messages the bot looks through, and to clean up clutter, the bot will delete the stream message in which it was tagged. If a private message is sent to the bot, the message must contain either the full name of the stream or a short stream specifier (which can be specified in `config.yml`). 
 
-For members (ie, students) in the Zulip organization, the bot will count the number of distinct assignment labels that appear among that member's messages. Messages that were posted after the deadline, and messages that were marked as irrelevant, are not counted. Here, "marked as irrelevant" means that a moderator reacts to the message with a designated emoji, which can be specified in `config.yml`). That total count is returned to the user as a private message. 
+For members (ie, students) in the Zulip organization, the bot will count the number of distinct assignment labels that appear among that member's messages. Messages that were posted after the deadline, and messages that were marked as invalid, are not counted. Here, "marked as invalid" means that a moderator reacts to the message with a designated emoji (which can be specified in `config.yml`). That total count is returned to the user as a private message, together with a list of the assignment labels for which the member got credit and a list of assignment labels that were either late or invalid.
 
-For moderators and admins (ie, instructional staff), the bot will do one of two things: 
+For moderators and admins (ie, the instructional staff), the bot will do one of two things: 
 
-* If the message contains an assignment label, the bot will return all messages that match that label as a private message. 
+* If the message, after being stripped of the stream specifier, is nonempty and there is a nonempty subset of students whose names contain the message as a substring, the bot will return all scores for those students in a verbose format, matching what those students would see when they themselves invoke TallyBot. 
 
-* Otherwise, the bot will return total counts for all members (ie, students). Members are specified by their name and email address. It will be a private message in CSV format with header `name,email,count`.
+* Otherwise, the bot will return names, email addresses, and current counts for all members. It will be a private message in CSV format with header `name,email,count`.
 
 ## Labeling Schemes
 
@@ -100,15 +100,10 @@ There are all kinds of things that can and should be done next. Here are somethi
 * The bot should have better help messages. 
 * It would be nice if the bot were easier to set up and/or if it could run on the cloud. 
 * There are many places where the code could be "cleaner."
-* The "daily tabulation" functionality for moderators is currently not very useful. It should be reworked in a more useful way, or else be eliminated.  
 * ...
-
 
 # License
 
-I do not understand software licensing. This code is written in Python ([Python Software Foundation License](https://docs.python.org/3/license.html)) mostly on Ubuntu ([Canonical's IPRights Policy](https://ubuntu.com/legal/intellectual-property-policy)) using the GNOME Text Editor ([GNU GPLv3](https://gitlab.gnome.org/GNOME/gnome-text-editor/)). It makes use of `python-zulip-api` ([Apache 2.0 license](https://github.com/zulip/python-zulip-api/blob/main/LICENSE)) and `pyyaml` ([MIT license](https://github.com/yaml/pyyaml/blob/master/LICENSE)). None of this software appears inside this repository. I don't understand many things about how all of this legalese fits together, and if you would like to explain this to me, I would enjoy (or at least, tolerate) having a conversation about this with you. 
+The code in this repository to be copylefted under [**GPLv3**](https://www.gnu.org/licenses/gpl-3.0.en.html) (only).
 
-Meanwhile, to the extent that I have rights to this code, I would like for it to be copylefted under [**GPLv3**](https://www.gnu.org/licenses/gpl-3.0.en.html) (only?). 
-
-The code was last updated in 2023. 
-
+The code was last updated in 2023. It is written in Python ([Python Software Foundation License](https://docs.python.org/3/license.html)) mostly on Ubuntu ([Canonical's IPRights Policy](https://ubuntu.com/legal/intellectual-property-policy)) using the GNOME Text Editor ([GNU GPLv3](https://gitlab.gnome.org/GNOME/gnome-text-editor/)). It makes use of `python-zulip-api` ([Apache 2.0 license](https://github.com/zulip/python-zulip-api/blob/main/LICENSE)) and `pyyaml` ([MIT license](https://github.com/yaml/pyyaml/blob/master/LICENSE)). None of these dependencies or tools appear in this repository. 

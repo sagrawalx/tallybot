@@ -13,7 +13,8 @@ class UserList:
     
     - "user_id" -- The user id is repeated here
     - "email" -- The email address of the user in the Zulip organization
-    - "role" -- The role type of user, as returned by Zulip
+    - "role" -- The role type of user, as returned by Zulip (owners, admins, 
+      moderators, members, guests have roles 100, 200, 300, 400, 500, resp)
     - "delivery_email" -- The personal email address of the user
     - "full_name" -- The full name of the user
     
@@ -81,6 +82,7 @@ class UserList:
         # Append data to list and return
         self.users[int(user_id)] = user
         
+        # Return
         return user
         
     def keys(self):
@@ -89,5 +91,19 @@ class UserList:
         in this user list.
         """
         return self.users.keys()
+        
+    def find(self, message: str, is_lower: bool=False):
+        """
+        Returns a list of users (represented as dicts) whose full_name contains
+        the input message, ignoring case. If the input message is empty, returns
+        the empty list (not all users). 
+        """
+        # If message is empty, return empty list
+        if len(message) == 0:
+            return []
+        
+        # Else return all uses whose name contains the message
+        m = message if is_lower else message.lower()
+        return [u for x, u in self.users.items() if m in u["full_name"].lower()]
     
     

@@ -43,7 +43,7 @@ class StandardLabel(Label):
     for internal use only. Instances of this class should be created only using
     the topic_match() and message_match() methods of StandardLabelingScheme. 
     """
-    def __init__(self, labeling : LabelingScheme, label : str, week : int, day : int):
+    def __init__(self, labeling: LabelingScheme, label: str, week: int, day: int):
         self._label = label
         self._week = week
         self._day = day
@@ -59,7 +59,7 @@ class StandardLabelingScheme(LabelingScheme):
     """
     A standard labeling scheme. Labels in this scheme are of the following form
      
-    w(\d+)(mon|tue|wed|thu|fri)
+    w(\d+)(mon|tue|wed|thu|fri|sat|sun)
     
     In other words, w followed by a number followed by a three-letter weekday
     name. The number represents the week number. The week number and weekday
@@ -95,7 +95,7 @@ class StandardLabelingScheme(LabelingScheme):
     
     This class contains the regex given above as a class variable called regex. 
     """
-    regex = r"w(\d+)(mon|tue|wed|thu|fri)"
+    regex = r"w(\d+)(mon|tue|wed|thu|fri|sat|sun)"
 
     def __init__(self, config: dict):
         """
@@ -154,7 +154,7 @@ class StandardLabelingScheme(LabelingScheme):
         if c not in self._due_days:
             return None
         
-        days_of_week = {"mon": 0, "tue": 1, "wed": 2, "thu": 3, "fri": 4}
+        days_of_week = {"mon": 0, "tue": 1, "wed": 2, "thu": 3, "fri": 4, "sat": 5, "sun": 6}
         c = days_of_week[c]
         return StandardLabel(self, a, b, c)
             
