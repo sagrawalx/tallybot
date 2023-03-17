@@ -5,9 +5,10 @@
     labeling_scheme: StandardLabelingScheme
     labeler_config: 
         start_date: 2023-04-03
-        due_time: 16
+        due_time: 7
         max_week: 10
-        due_days: ['tue', 'thu']
+        due_days: ['mon', 'wed', 'fri']
+        exceptions: ['w4mon', 'w4wed', 'w6wed', 'w8mon', 'w8wed', 'w8fri', 'w10wed', 'w10fri']
 -
     stream_specifier: wi23
     stream_name: Winter 2023, Math 187A
