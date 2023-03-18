@@ -38,12 +38,28 @@ Users familiar with Python can implement an alternative `LabelingScheme` if they
 
 At some point I will make this easier to set up. For now, here are the instructions: 
 
+## Zulip Organization
+
+You'll need your own [Zulip organization](https://zulip.com/help/getting-your-organization-started-with-zulip), with one stream for each course. If you'd like to see how I've set up my organization, just reach out to ask!
+
+## Add Bot
+
+[Add a generic bot](https://zulip.com/help/add-a-bot-or-integration) to your Zulip organization: 
+
+* The bot needs to be an administrator. 
+* The name you choose here will be used only to invoke the bot. I named it `TallyBot` for consistency, but you can name it whatever you like. 
+* The email address can also be set to whatever you like. I used `tally-bot@...`. 
+
+Download the bot's `zuliprc` file. The file can live anywhere you like, but for the purposes of these instructions, I will assume that it lives in `~/downloads/`. 
+
+Look for the bot in the [organization settings](https://zulip.com/help/view-all-bots-in-your-organization) and make sure that its role is set to administrator. Then make sure that the bot is [subscribed](https://zulip.com/help/add-or-remove-users-from-a-stream) to all of the streams you want it to tally. 
+
 ## Install `python-zulip-api`
 
 `cd` into a directory inside which you would like the `python-zulip-api` package to live; for the purposes of these instructions, I will label this directory "`/path/to/`." Then [install](https://zulip.com/api/writing-bots) as follows:
 
 ```
-git clone https://github.com/zulip/python-zulip-api.git
+git clone https://github.com/zulip/python-zulip-api
 cd python-zulip-api
 python3 ./tools/provision
 ```
@@ -52,6 +68,14 @@ The output should end with a `source` command like the following. **You don't ne
 
 ```
 source /path/to/python-zulip-api/zulip-api-py3-venv/bin/activate
+```
+
+## Install `pyyaml`
+
+The bot also makes use of the [PyYAML](https://pyyaml.org/) library, so you'll want to install it if you haven't already: 
+
+```
+pip install pyyaml
 ```
 
 ## Download and Configure Bot
@@ -64,22 +88,6 @@ git clone https://github.com/sagrawalx/tallybot
 ```
 
 You'll then want to edit `config.yml` to your liking. 
-
-The bot also makes use of the [PyYAML](https://pyyaml.org/) library, so you'll want to install it if you haven't already: 
-
-```
-pip install pyyaml
-```
-
-## Add Bot
-
-[Add a generic bot](https://zulip.com/help/add-a-bot-or-integration) to your Zulip organization: 
-
-* The bot needs to be an administrator. 
-* The name you choose here will be used only to invoke the bot. I named it `TallyBot` for consistency, but you can name it whatever you like. 
-* The email address can also be set to whatever you like. I used `tally-bot@...`. 
-
-Download the bot's `zuliprc` file. The file can live anywhere you like, but for the purposes of these instructions, I will assume that it lives in `~/downloads/`. 
 
 ## Start Bot
 
