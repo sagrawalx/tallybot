@@ -173,17 +173,29 @@ def clear_stream_mentions(client) -> None:
             if m["type"] == "stream":
                 client.delete_message(m["id"])
 
-def respond(client, interloc: dict, response: str) -> None:
+def respond(client, interloc: dict, response: str, num_lines: int = 150) -> None:
     """
     Uses the given client to send the interlocutor a private message containing 
     the given response. 
     """
-    request = {
-        "type": "private",
-        "to": [interloc["user_id"]],
-        "content": response,
-    }
-    client.send_message(request)
+    i = 0
+    lines = 0
+    msg = ""
+    while i < len(response):
+        if lines < num_lines:
+            msg += response[i]
+            if response[i] == "\n":
+                lines += 1
+        if lines == num_lines or i+1 == len(response):
+            request = {
+                "type": "private",
+                "to": [interloc["user_id"]],
+                "content": msg,
+            }
+            client.send_message(request)
+            lines = 0
+            msg = ""
+        i += 1
 
 def minimize(x: str) -> str:
     """
