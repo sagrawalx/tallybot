@@ -2,6 +2,7 @@
 
 import string
 import yaml
+import os
 from datetime import datetime
 from zulip_bots.lib import BotHandler
 from labelingscheme import *
@@ -47,7 +48,7 @@ class TallyBotHandler:
             
             # Should be commented out when deployed
             # if interloc["role"] > 300:
-            #     response = "I am offline for the weekend."
+            #     response = "I am offline."
             #     respond(client, interloc, response)
             #     return None
             
@@ -81,7 +82,7 @@ class TallyBotHandler:
             labeling = scheme(config.pop("labeler_config"))
             
             # Get messages
-            messages = get_messages(client, users, config, labeling)
+            messages = get_messages(bot_handler, users, config, labeling)
             
             if messages is None:
                 response = "There was an unexpected problem. Please try again, "\
@@ -119,7 +120,7 @@ class TallyBotHandler:
         
         # Return
         finally:
-           return None
+            return None
 
 handler_class = TallyBotHandler
 
@@ -235,15 +236,34 @@ def get_config(config_file, message: dict) -> dict:
     # If no configuration data was matched ...         
     return None
     
-def get_messages(client, users: UserList, config: dict, labeling: LabelingScheme) -> list:
+def get_messages(bot_handler, users: UserList, config: dict, labeling: LabelingScheme) -> list:
     """
     Returns a list of all messages by members whose topic has a match for the
     labeling scheme, ie, for which the topic_match() method of the given
     labeling scheme returns something other than None. 
     """
-    # Get messages
-    messages = []
-        
+    # Initialize backup file
+    name = f"data_msgs_{config['stream_specifier']}.csv"
+    filepath = os.path.join(bot_handler._root_dir, name)
+    client = bot_handler._client
+      
+    # Create backup file if needed
+    csvfile = open(filepath, "a", newline="")
+    csvfile.close()
+    
+    # Load messages from backup file
+    messages = {}
+    with open(filepath, newline="") as csvfile:
+        reader = DictReader(csvfile)
+        for msg in reader:
+            msg["id"] = int(msg["id"])
+            msg["sender_id"] = int(msg["sender_id"])
+            msg["timestamp"] = datetime.fromisoformat(msg["timestamp"])
+            msg["on_time"] = msg["on_time"] == "True"
+            msg["valid"] = msg["valid"] == "True"
+            messages[msg["id"]] = msg
+    
+    # Get messages from client    
     batch = []
     found_oldest = False
     while not found_oldest: 
@@ -295,8 +315,8 @@ def get_messages(client, users: UserList, config: dict, labeling: LabelingScheme
                             valid = False
                             break
                 
-                # Add message to output list
-                messages.append({
+                # Consolidate relevant information
+                msg = {
                     "id" : m["id"], 
                     "sender_id" : sender["user_id"], 
                     "sender_name" : sender["full_name"],
@@ -306,10 +326,20 @@ def get_messages(client, users: UserList, config: dict, labeling: LabelingScheme
                     "timestamp" : timestamp,
                     "on_time" : (timestamp <= label.deadline()),
                     "valid" : valid
-                })
+                }
+                
+                # Add message to message list
+                messages[m["id"]] = msg
+    
+    # Write data to file
+    field_names = ["id", "sender_id", "sender_name", "sender_email", "label", "content", "timestamp", "on_time", "valid"]
+    with open(filepath, "w", newline="") as csvfile:
+        writer = DictWriter(csvfile, field_names)
+        writer.writeheader()
+        writer.writerows(messages.values())
     
     # Return
-    return messages
+    return messages.values()
     
 def do_tally(messages: list) -> dict:
     """
