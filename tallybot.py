@@ -342,6 +342,13 @@ def get_messages(bot_handler, users: UserList, config: dict, labeling: LabelingS
                 
                 # Add message to message list
                 messages[m["id"]] = msg
+            
+            # If message is now not-to-be-kept but was in the backup file, it 
+            # should be deleted. Since message sender cannot change, this can 
+            # only happen if and only if a message is moved from a RQ topic to 
+            # a non-RQ topic after the initial posting. 
+            elif m["id"] in messages:
+                del messages[m["id"]]
     
     # Write data to file
     field_names = ["id", "sender_id", "sender_name", "sender_email", "label", "content", "timestamp", "on_time", "valid"]
