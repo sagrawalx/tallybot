@@ -120,7 +120,7 @@ class TallyBotHandler:
         
         # Return
         finally:
-            return None
+           return None
 
 handler_class = TallyBotHandler
 
@@ -275,19 +275,20 @@ def get_messages(bot_handler, users: UserList, config: dict, labeling: LabelingS
             msg["valid"] = msg["valid"] == "True"
             messages[msg["id"]] = msg
     
-    # Get messages from client    
+    # Get messages from client  
     batch = []
     found_oldest = False
     while not found_oldest: 
         # Run request for batch of messages
-        anchor = "newest" if len(batch) == 0 else batch[-1]["id"]
+        anchor = "newest" if len(batch) == 0 else batch[0]["id"]
         request = {
             "anchor": anchor,
             "apply_markdown": "false",
             "num_before": 5000,
             "num_after": 0,
             "narrow": [
-                {"operator": "stream", "operand": config["stream_name"]}
+                {"operator": "stream", 
+                "operand": config["stream_name"]}
             ]
         }
         result = client.get_messages(request)
