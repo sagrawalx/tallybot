@@ -102,7 +102,7 @@ This should start up the bot, and the bot can be used while this script continue
 
 # Todo
 
-> I like this mysterious nature of tallybot honestly! It's like a minor god, to whom you have to pray properly! --Aranya Lahiri
+> I like this mysterious nature of TallyBot honestly! It's like a minor god, to whom you have to pray properly! --Aranya Lahiri
 
 There are likely numerous problems. Here are some things that I'm aware of that can and should be done next: 
 
