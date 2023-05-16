@@ -106,7 +106,7 @@ This should start up the bot, and the bot can be used while this script continue
 
 TallyBot has been used for a few classes now, but there are likely numerous outstanding problems. Here are some things that I'm aware of that can and should be done next: 
 
-* The bot should have more graceful error handling. It often "crashes silently."
+* The bot should have more graceful error handling. When it crashes, it usually "crashes silently."
 * The bot should have better help messages. 
 * It would be nice if the bot were easier to set up, and especially if it could be made to run on the cloud. 
 * There are many places where the code could be "cleaner."
