@@ -104,7 +104,7 @@ This should start up the bot, and the bot can be used while this script continue
 
 > I like this mysterious nature of TallyBot honestly! It's like a minor god, to whom you have to pray properly! --Aranya Lahiri
 
-There are likely numerous problems. Here are some things that I'm aware of that can and should be done next: 
+TallyBot has been used for a few classes now, but there are likely numerous outstanding problems. Here are some things that I'm aware of that can and should be done next: 
 
 * The bot should have more graceful error handling. It often "crashes silently."
 * The bot should have better help messages. 
