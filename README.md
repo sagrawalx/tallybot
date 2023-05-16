@@ -102,11 +102,13 @@ This should start up the bot, and the bot can be used while this script continue
 
 # Todo
 
-There are all kinds of things that can and should be done next. Here are somethings that are on my radar: 
+> I like this mysterious nature of tallybot honestly! It's like a minor god, to whom you have to pray properly! --Aranya Lahiri
 
-* The bot should have more graceful error handling. 
+There are likely numerous problems. Here are some things that I'm aware of that can and should be done next: 
+
+* The bot should have more graceful error handling. It often "crashes silently."
 * The bot should have better help messages. 
-* It would be nice if the bot were easier to set up and/or if it could run on the cloud. 
+* It would be nice if the bot were easier to set up, and especially if it could be made to run on the cloud. 
 * There are many places where the code could be "cleaner."
 * ...
 
