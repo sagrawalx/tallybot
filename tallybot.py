@@ -67,7 +67,7 @@ class TallyBotHandler:
                 "(a) tag me in a stream message in the class stream that you're "\
                 "interested in, or "\
                 "(b) send me a private message containing the short specifier "\
-                "(eg, 'wi23') or the full name (eg, 'Winter 2023, Math 187A') "\
+                "(eg, 'wi24') or the full name (eg, 'Winter 2024, Math 106') "\
                 "for the class stream that you're interested in. Please try again."
                 
                 respond(client, interloc, response)
