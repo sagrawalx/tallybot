@@ -8,7 +8,7 @@
         due_time: 6
         max_week: 10
         due_days: ['mon', 'wed', 'fri']
-        exceptions: ['w1mon', 'w2mon', 'w3mon', 'w4mon', 'w5mon', 'w6mon', 'w7mon', 'w9mon']
+        exceptions: ['w1mon', 'w2mon', 'w3mon', 'w4mon', 'w4wed', 'w5mon', 'w6mon', 'w7mon', 'w9mon']
 -
     stream_specifier: sp23
     stream_name: Spring 2023, Math 11
