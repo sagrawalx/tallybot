@@ -6,9 +6,9 @@
     labeler_config: 
         start_date: 2024-01-08
         due_time: 6
-        max_week: 10
-        due_days: ['mon', 'wed', 'fri']
-        exceptions: ['w1mon', 'w2mon', 'w3mon', 'w4mon', 'w4wed', 'w5mon', 'w6mon', 'w7mon', 'w9mon']
+        max_week: 9
+        due_days: ['wed', 'fri']
+        exceptions: ['w4wed']
 -
     stream_specifier: sp23
     stream_name: Spring 2023, Math 11
