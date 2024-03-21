@@ -1,4 +1,15 @@
 -
+    stream_specifier: sp24
+    stream_name: Spring 2024, Math 187A
+    invalid_emoji: octopus
+    labeling_scheme: StandardLabelingScheme
+    labeler_config: 
+        start_date: 2024-04-01
+        due_time: 6
+        max_week: 10
+        due_days: ['tue', 'thu']
+        exceptions: ['w2thu', 'w4thu', 'w6thu', 'w8thu']
+-
     stream_specifier: wi24
     stream_name: Winter 2024, Math 106
     invalid_emoji: octopus
