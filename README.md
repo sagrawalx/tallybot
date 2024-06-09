@@ -3,7 +3,7 @@
 
 # Background
 
-[I](https://sagrawalx.github.io/) typically structure my classes so that students are asked to read some material and submit a Reading Question (RQ) about that material before we discuss it in class. An RQ need not strictly be a question: it can be any comment that shows sincere engagement with the content of the assigned reading, though questions are generally encouraged. I then use these RQs to help frame our in-class discussion of the material. Before writing this bot, I'd experimented with a few ways of soliciting these RQs: 
+I typically structure my classes so that students are asked to read some material and submit a Reading Question (RQ) about that material before we discuss it in class. An RQ need not strictly be a question: it can be any comment that shows sincere engagement with the content of the assigned reading, though questions are generally encouraged. I then use these RQs to help frame our in-class discussion of the material. Before writing this bot, I'd experimented with a few ways of soliciting these RQs: 
 
 * I've had students submit RQs via a Google Form. This makes data tabulation easy, but students are unable to see and respond to each other's RQs. 
 * I've had students post their RQ to Discord. This allows them to see each other's RQs, and one student's RQ can be a response to someone else's RQ. I tabulated the data manually, and it was fine because it was a very small class, but it would be impossible for a large class. 
