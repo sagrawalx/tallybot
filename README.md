@@ -87,7 +87,7 @@ cd /path/to/python-zulip-api/zulip_bots/zulip_bots/bots/
 git clone https://github.com/sagrawalx/tallybot
 ```
 
-You'll then want to edit `config.yml` to your liking. 
+You'll then want to edit `config.yml` to your liking. Make sure you're consistent about indentation whitespace in the yml file. 
 
 ## Start Bot
 
