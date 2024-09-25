@@ -302,6 +302,8 @@ def get_messages(bot_handler, users: UserList, config: dict, labeling: LabelingS
             # Drop bot messages
             if m["sender_full_name"] == "Notification Bot":
                 keep = False
+            elif m["sender_full_name"] == "Welcome Bot":
+                keep = False
             else:
                 # Drop moderator messages
                 sender = users.get(m["sender_id"])
